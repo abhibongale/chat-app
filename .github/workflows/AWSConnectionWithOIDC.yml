@@ -31,4 +31,4 @@ jobs:
       # upload all the files to AWS s3
       - name: Copy Website to s3
         run: |
-          aws s3 cp . s3://${{ env.BUCKET_NAME }}
+          aws s3 cp . s3://${{ env.BUCKET_NAME }} --recursive

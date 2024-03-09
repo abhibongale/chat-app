@@ -18,7 +18,7 @@ jobs:
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GithubOICDAuthenticationForChatAppRole
+          role-to-assume: arn:aws:iam::569428552925:role/GithubOICDAuthenticationForChatAppRole
           role-session-name: GithubOICDAuthenticationForChatAppRole
           aws-region: ${{ env.AWS_REGION }}
 

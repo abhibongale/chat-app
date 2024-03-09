@@ -6,7 +6,8 @@ on:
     branches:
       - main
 env:
-  AWS_REGION : "us-east-2"   
+  AWS_REGION : "us-east-2"
+  BUCKET_NAME: "abhibongale-serverless-chat-app"
 permissions:
       id-token: write   # This is required for requesting the JWT
       contents: read    # This is required for actions/checkout
@@ -27,3 +28,7 @@ jobs:
       - name: Fetch caller Identity
         run: |
           aws sts get-caller-identity
+      # upload all the files to AWS s3
+      - name: Copy Website to s3
+        run: |
+          aws s3 cp . s3://${{ env.BUCKET_NAME }}/

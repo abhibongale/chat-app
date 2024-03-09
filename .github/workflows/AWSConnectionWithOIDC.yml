@@ -2,7 +2,9 @@
 #For the "Audience": Use sts.amazonaws.com
 name: AWS OIDC Connect Demo
 on:
-  push
+  push:
+    branches:
+      - main
 env:
   AWS_REGION : "us-east-2"   
 permissions:

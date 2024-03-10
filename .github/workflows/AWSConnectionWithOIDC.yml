@@ -5,6 +5,10 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.github/*'
 env:
   AWS_REGION : "us-east-2"
   BUCKET_NAME: "abhibongale-serverless-chat-app"

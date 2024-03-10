@@ -9,6 +9,7 @@ on:
       - 'README.md'
       - 'LICENSE'
       - '.github/*'
+      - './git/'
 env:
   AWS_REGION : "us-east-2"
   BUCKET_NAME: "abhibongale-serverless-chat-app"

@@ -3,83 +3,55 @@ var ChatApp = window.ChatApp || {};
 (function scopeWrapper($) {
 
     var currentUsername = 'Student';
-
-    var lastChat = null;
-
-    var apiClient = apigClientFactory.newClient();
+    var apiEndpoint = ChatApp.apiEndpoint;
 
     ChatApp.populateChats = function () {
-        apiClient.conversationsGet({}, null, {})
-            .then(function (result) {
-
-                result.data.forEach(function (convo) {
-                    var otherUsers = [];
-                    convo.participants.forEach(function (user) {
-                        if (user !== currentUsername) {
-                            otherUsers.push(user);
-                        }
-                    });
-
-                    var last = '&nbsp;';
-                    if (convo.last) {
-                        last = moment(new Date(convo.last)).fromNow();
+        $.get(apiEndpoint + '/conversations').done(function (data) {
+            data.forEach(function (convo) {
+                var otherUsers = [];
+                convo.participants.forEach(function (user) {
+                    if (user !== currentUsername) {
+                        otherUsers.push(user);
                     }
-
-                    $('TBODY').append('<tr><td><a href="chat.html#' + convo.id + '">' + otherUsers.join(', ') + '</a></td><td>' + last + '</td></tr>');
                 });
-                $('TBODY').append('<tr><td></td><td></td></tr>');
+
+                $('TBODY').append('<tr><td><a href="chat.html#' + convo.id + '">' + otherUsers.join(', ') + '</a></td></tr>');
             });
+            $('TBODY').append('<tr><td></td></tr>');
+        });
     };
 
     ChatApp.loadChat = function () {
-        apiClient.conversationsIdGet({id: location.hash.substring(1)}, null, {})
-            .then(function (result) {
-                var lastRendered = lastChat === null ? 0 : lastChat;
-                if((lastChat === null && result.data.last) || lastChat < result.data.last) {
-                    lastChat = result.data.last;
+        $.get(apiEndpoint + '/conversations/' + location.hash.substring(1)).done(function (result) {
+            result.messages.forEach(function (message) {
+                var panel = $('<div class="panel">');
+                if (message.sender === currentUsername) {
+                    panel.addClass('panel-default');
                 } else {
-                    return;
+                    panel.addClass('panel-info');
+                    panel.append('<div class="panel-heading">' + message.sender + '</div>');
                 }
-                result.data.messages.forEach(function (message) {
-                    if(message.time > lastRendered) {
-                        var panel = $('<div class="panel">');
-                        if (message.sender === currentUsername) {
-                            panel.addClass('panel-default');
-                        } else {
-                            panel.addClass('panel-info');
-                            panel.append('<div class="panel-heading">' + message.sender + '</div>');
-                        }
-                        var body = $('<div class="panel-body">').text(message.message);
-                        panel.append(body);
-                        panel.append('<div class="panel-footer messageTime" data-time="' + message.time + '">' + moment(message.time).fromNow() + '</div>');
+                var body = $('<div class="panel-body">').text(message.message);
+                panel.append(body);
+                panel.append('<div class="panel-footer messageTime" data-time="' + message.time + '">' + moment(message.time).fromNow() + '</div>');
 
-                        var row = $('<div class="row">');
-                        var buffer = $('<div class="col-xs-4">');
-                        var holder = $('<div class="col-xs-8">');
-                        holder.append(panel);
+                var row = $('<div class="row">');
+                var buffer = $('<div class="col-xs-4">');
+                var holder = $('<div class="col-xs-8">');
+                holder.append(panel);
 
-                        if (message.sender === currentUsername) {
-                            row.append(buffer);
-                            row.append(holder);
-                        } else {
-                            row.append(holder);
-                            row.append(buffer);
-                        }
+                if (message.sender === currentUsername) {
+                    row.append(buffer);
+                    row.append(holder);
+                } else {
+                    row.append(holder);
+                    row.append(buffer);
+                }
 
-                        $('#chat').append(row);
-                    }
-                });
-                window.scrollTo(0, document.body.scrollHeight);
+                $('#chat').append(row);
             });
-    };
-
-    ChatApp.send = function () {
-        apiClient.conversationsIdPost({id: location.hash.substring(1)}, $('#message').val(), {})
-            .then(function () {
-                $('#message').val('').focus();
-                ChatApp.loadChat();
-            });
-
+            window.scrollTo(0, document.body.scrollHeight);
+        });
     };
 
 }(jQuery));

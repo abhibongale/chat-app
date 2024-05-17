@@ -6,6 +6,8 @@ var ChatApp = window.ChatApp || {};
 
     var lastChat = null;
 
+    var apigClientFactory = require('aws-api-gateway-client').default;
+
     var apiClient = apigClientFactory.newClient();
 
     ChatApp.populateChats = function () {

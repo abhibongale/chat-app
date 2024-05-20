@@ -1,4 +1,5 @@
-var ChatApp = window.ChatApp || {};
+//var ChatApp = window.ChatApp || {};
+var ChatApp = {};
 
 (function scopeWrapper($) {
 
